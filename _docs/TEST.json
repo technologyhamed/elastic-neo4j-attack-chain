@@ -1,0 +1,134 @@
+
+FROM .alerts-security.alerts-*
+| EVAL chain_id =
+    CASE(
+        kibana.alert.ancestors.depth == 0,
+        id,
+        kibana.alert.ancestors.id
+    )
+
+| STATS
+    alerts_in_chain = COLLECT(
+        {
+            "@timestamp": @timestamp,
+
+            "ancestor_id": kibana.alert.ancestors.id,
+            "ancestor_depth": kibana.alert.ancestors.depth,
+
+            "source.ip": source.ip,
+            "source.port": source.port,
+            "destination.ip": destination.ip,
+            "destination.port": destination.port,
+
+            "host.name": host.name,
+            "user.name": user.name,
+
+            "kibana.alert.severity": kibana.alert.severity,
+            "kibana.alert.risk_score": kibana.alert.risk_score,
+            "kibana.alert.rule.name": kibana.alert.rule.name,
+
+            "kibana.alert.rule.threat.tactics.id":
+                kibana.alert.rule.threat.tactics.id,
+            "kibana.alert.rule.threat.techniques.id":
+                kibana.alert.rule.threat.techniques.id,
+            "kibana.alert.rule.threat.technique.subtechnique.id":
+                kibana.alert.rule.threat.technique.subtechnique.id,
+
+            "kibana.alert.rule.threat.tactics.name":
+                kibana.alert.rule.threat.tactics.name,
+            "kibana.alert.rule.threat.techniques.name":
+                kibana.alert.rule.threat.techniques.name,
+            "kibana.alert.rule.threat.technique.subtechnique.name":
+                kibana.alert.rule.threat.technique.subtechnique.name
+        }
+    )
+BY chain_id
+| KEEP chain_id,
+| SORT chain_id
+
+
+
+FROM .alerts-security.alerts-*
+| MV_EXPAND kibana.alert.ancestors.id
+| WHERE kibana.alert.ancestors.depth >= 0
+| EVAL
+    chain_id = kibana.alert.ancestors.id,
+    node_depth = kibana.alert.ancestors.depth
+| STATS
+    alerts_in_chain = COLLECT(
+        ROW(
+            "@timestamp" = @timestamp,
+            "ancestor_id" = kibana.alert.ancestors.id,
+            "ancestor_depth" = kibana.alert.ancestors.depth,
+
+            "source.ip" = source.ip,
+            "source.port" = source.port,
+            "destination.ip" = destination.ip,
+            "destination.port" = destination.port,
+
+            "host.name" = host.name,
+            "user.name" = user.name,
+
+            "severity" = kibana.alert.severity,
+            "risk_score" = kibana.alert.risk_score,
+            "rule_name" = kibana.alert.rule.name,
+
+            "tactic_ids" = kibana.alert.rule.threat.tactics.id,
+            "technique_ids" = kibana.alert.rule.threat.techniques.id,
+            "subtechnique_ids" = kibana.alert.rule.threat.technique.subtechnique.id,
+
+            "tactic_names" = kibana.alert.rule.threat.tactics.name,
+            "technique_names" = kibana.alert.rule.threat.techniques.name,
+            "subtechnique_names" = kibana.alert.rule.threat.technique.subtechnique.name
+        )
+    )
+BY chain_id
+| KEEP chain_id, alerts_in_chain
+| SORT chain_id
+
+
+
+FROM .alerts-security.alerts-*
+| MV_EXPAND kibana.alert.ancestors.id
+| WHERE kibana.alert.ancestors.depth >= 0
+| EVAL
+    chain_id = kibana.alert.ancestors.id,
+    ancestor_depth = kibana.alert.ancestors.depth,
+    event_timestamp = @timestamp,
+	tactic_ids_ = CASE WHEN IS_NULL(kibana.alert.rule.threat.tactics.id) THEN "N/A" ELSE TO_STRING(destination.ip) END,
+	
+	tactic_ids = kibana.alert.rule.threat.tactics.id,
+    technique_ids = kibana.alert.rule.threat.techniques.id,
+    subtechnique_ids = kibana.alert.rule.threat.technique.subtechnique.id,
+    tactic_names" = kibana.alert.rule.threat.tactics.name,
+    technique_names = kibana.alert.rule.threat.techniques.name,
+    subtechnique_names = kibana.alert.rule.threat.technique.subtechnique.name,
+    src_ip = COALESCE (source.ip,"N/A"),
+    src_port = COALESCE(TO_STRING(source.port), "0"),
+    dst_ip = COALESCE ((destination.ip, "N/A"), 
+    dst_port = COALESCE(TO_STRING(destination.port), "0"),
+    host_name = COALESCE(host.name, "N/A"),
+    user_name = COALESCE(user.name, "N/A"),
+    alert_severity = COALESCE(kibana.alert.severity, "unknown"),
+    alert_risk_score = COALESCE(TO_INTEGER(kibana.alert.risk_score), 0),
+    alert_rule_name = COALESCE(kibana.alert.rule.name, "unknown")
+| STATS
+    alerts_in_chain = COLLECT(
+      ROW(
+        event_timestamp,
+        chain_id,
+        ancestor_depth,
+        src_ip,
+        src_port,
+        dst_ip,
+        dst_port,
+        host_name,
+        user_name,
+        alert_severity,
+        alert_risk_score,
+        alert_rule_name
+      )
+    )
+BY chain_id
+| KEEP chain_id, alerts_in_chain
+| SORT chain_id

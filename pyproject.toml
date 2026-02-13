@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "elastic-neo4j-attack-chain"
+version = "1.0.0"
+description = "Attack chain extraction from Elastic Security to Neo4j using SEPSes ontology"
+authors = ["Security Engineer h.ebrahimi@iua.ac.ir>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+elasticsearch = {version = "^8.17.1", extras = ["async"]}
+neo4j = "^2025.07.1"
+python-dotenv = "^1.0.0"
+pydantic = "^2.6.0"
+pydantic-settings = "^2.2.0"
+typer = "^0.9.0"
+rich = "^13.7.0"
+aiohttp = "^3.9.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.23.0"
+black = "^24.0.0"
+isort = "^5.13.0"
+mypy = "^1.8.0"
+
+[tool.poetry.scripts]
+attack-chain = "elastic_neo4j_attack_chain.cli:app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

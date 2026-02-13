@@ -1,0 +1,8 @@
+curl -L -O https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-8.17.1-linux-x86_64.tar.gz
+tar xzvf elastic-agent-8.17.1-linux-x86_64.tar.gz
+cd elastic-agent-8.17.1-linux-x86_64
+sudo ./elastic-agent install \
+  --fleet-server-es=http://localhost:9200 \
+  --fleet-server-service-token=AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE3NzA1NjYxNzExMDM6VVoydElKb2NUbXVGMlpQeDVaTWdCUQ \
+  --fleet-server-policy=fleet-server-policy \
+  --fleet-server-port=8220

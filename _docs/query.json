@@ -1,0 +1,181 @@
+GET /.alerts-security.alerts-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now-7d/d",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "unique_parents": {
+      "terms": {
+        "field": "kibana.alert.ancestors.id",
+        "size": 1
+      },
+      "aggs": {
+        "first_child": {
+          "top_hits": {
+            "size": 1,
+            "_source": [
+              "@timestamp",
+              "host.name",
+              "kibana.alert.severity",
+              "kibana.alert.rule.name"
+            ],
+            "sort": [
+              {
+                "@timestamp": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        },
+        "child_count": {
+          "value_count": {
+            "field": "kibana.alert.uuid"
+          }
+        }
+      }
+    }
+  }
+}
+
+GET /.alerts-security.alerts-*/_mapping
+
+
+GET .alerts-security.alerts-*/_search
+{
+  "size": 0,
+  "runtime_mappings": {
+    "ancestor_id": {
+      "type": "keyword",
+      "script": """
+        if (doc.containsKey('kibana.alert.ancestors.id')) {
+          for (id in doc['kibana.alert.ancestors.id']) {
+            emit(id.toString());
+          }
+        }
+      """
+    }
+  },
+  "query": {
+    "range": {
+      "@timestamp": {
+        "gte": "now-7d/d",
+        "lte": "now/d"
+      }
+    }
+  },
+  "aggs": {
+    "root_ancestors": {
+      "terms": {
+        "field": "ancestor_id",
+        "size": 5,
+        "order": { "_count": "desc" }
+      },
+      "aggs": {
+        "sample_child": {
+          "top_hits": {
+            "size": 1,
+            "_source": [
+              "kibana.alert.rule.name",
+              "kibana.alert.rule.tactics",
+              "kibana.alert.rule.techniques",
+              "kibana.alert.severity",
+              "kibana.alert.risk_score",
+              "host.name",
+              "user.name",
+              "source.ip",
+              "destination.ip"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET .alerts-security.alerts-*/_search
+{
+  "size": 0,
+  "runtime_mappings": {
+    "ancestor_id": {
+      "type": "keyword",
+      "script": "if (doc.containsKey('kibana.alert.ancestors.id')) { for (id in doc['kibana.alert.ancestors.id']) { emit(id.toString()); } }"
+    }
+  },
+  "query": {
+    "bool": {
+      "filter": [
+        { "range": { "@timestamp": { "gte": "now-7d/d" } } },
+        { "range": { "kibana.alert.risk_score": { "gte": 20 } } },
+        {"terms": {"kibana.alert.workflow_status": ["open", "acknowledged"]}}
+      ]
+    }
+  },
+  "aggs": {
+    "root_ancestors": {
+      "terms": {
+        "field": "ancestor_id",
+        "size": 1,
+        "order": { "_count": "desc" }
+      },
+      "aggs": {
+        "children_details": {
+          "top_hits": {
+            "size": 2,
+            "sort": [ { "@timestamp": { "order": "asc" } } ],
+            "_source": [
+              "@timestamp",
+              "source.ip",
+              "source.port",
+              "destination.ip",
+              "destination.port",
+              "host.id",
+              "host.name",
+              "process.pid",
+			  "process.entity_id",
+              "process.name",
+              "process.command_line",
+              "process.executable",
+              "user.id",
+              "user.name",
+              "file.uid",
+              "file.namme",
+              "file.path",
+              "registry.key",
+              "kibana.alert.uuid",
+              "kibana.alert.url.id",
+              "kibana.alert.severity",
+              "kibana.alert.risk_score",
+              "kibana.alert.rule.name",
+              "kibana.alert.rule.threat.tactics.id",
+              "kibana.alert.rule.threat.techniques.id",
+              "kibana.alert.rule.threat.technique.subtechnique.id",
+              "kibana.alert.rule.threat.tactics.name",
+              "kibana.alert.rule.threat.techniques.name",
+              "kibana.alert.rule.threat.technique.subtechnique.name"
+              
+            ]
+          }
+        },
+        "unique_hosts": {
+          "cardinality": { "field": "host.name.keyword" }
+        }
+      }
+    }
+  }
+}
+
+####################### 2-Qwen-----------------------------
