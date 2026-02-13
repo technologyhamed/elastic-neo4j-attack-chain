@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       # Authentication
-      - NEO4J_AUTH=neo4j/Admin@1234
+      - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD}
       
       # HTTP Configuration (Public-facing)
       - NEO4J_server_http_listen__address=0.0.0.0:7474
@@ -70,10 +70,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - NEO4J_URL=bolt://neo4j:7687        # Internal Docker network
-      - NEO4J_USER=neo4j
-      - NEO4J_PASSWORD=Admin
-      - NEO4J_DATABASE=neo4j
+      - NEO4J_URI=${NEO4J_URI}
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      - NEO4J_DATABASE=${NEO4J_DATABASE}
     depends_on:
       neo4j:
         condition: service_healthy
@@ -87,10 +87,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - NEO4J_URI=bolt://neo4j:7687        # Internal Docker network
-      - NEO4J_USER=neo4j
-      - NEO4J_PASSWORD=Admin@1234
-      - NEO4J_DATABASE=neo4j
+      - NEO4J_URI=${NEO4J_URI}
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      - NEO4J_DATABASE=${NEO4J_DATABASE}
     depends_on:
       neo4j:
         condition: service_healthy
