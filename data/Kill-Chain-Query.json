@@ -1,0 +1,497 @@
+GET /.internal.alerts-security.alerts-default-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now/y",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "by_ancestor_id": {
+      "terms": {
+        "field": "kibana.alert.ancestors.id",
+        "size": 100
+      }
+    }
+  }
+}
+
+
+
+GET /.internal.alerts-security.alerts-default-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now/y",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "by_ancestor_id": {
+      "terms": {
+        "field": "kibana.alert.ancestors.id",
+        "size": 100
+      },
+      "aggs": {
+        "by_depth": {
+          "terms": {
+            "field": "kibana.alert.ancestors.depth",
+            "size": 5
+          }
+        },
+        "rules": {
+          "terms": {
+            "field": "kibana.alert.rule.name",
+            "size": 5
+          }
+        },
+        "severity": {
+          "terms": {
+            "field": "kibana.alert.severity",
+            "size": 5
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET /.internal.alerts-security.alerts-default-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now/y",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "by_ancestor_id": {
+      "terms": {
+        "field": "kibana.alert.ancestors.id",
+        "size": 100
+      }
+    }
+  }
+}
+
+GET /.internal.alerts-security.alerts-default-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now/y",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "by_ancestor_id": {
+      "terms": {
+        "field": "kibana.alert.ancestors.id",
+        "size": 100
+      },
+      "aggs": {
+        "by_depth": {
+          "terms": {
+            "field": "kibana.alert.ancestors.depth",
+            "size": 5
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET /.internal.alerts-security.alerts-default-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now/y",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "by_ancestor_id": {
+      "terms": {
+        "field": "kibana.alert.ancestors.id",
+        "size": 100
+      },
+      "aggs": {
+        "by_depth": {
+          "terms": {
+            "field": "kibana.alert.ancestors.depth",
+            "size": 5
+          }
+        },
+        "rules": {
+          "terms": {
+            "field": "kibana.alert.rule.name",
+            "size": 5
+          }
+        },
+        "severity": {
+          "terms": {
+            "field": "kibana.alert.severity",
+            "size": 5
+          }
+        }
+      }
+    }
+  }
+}
+
+GET /.internal.alerts-security.alerts-default-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now/y",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "by_ancestor_id": {
+      "terms": {
+        "field": "kibana.alert.ancestors.id",
+        "size": 100
+      },
+      "aggs": {
+
+        "by_depth": {
+          "terms": {
+            "field": "kibana.alert.ancestors.depth",
+            "size": 5,
+            "order": { "_key": "asc" }
+          },
+          "aggs": {
+
+            "by_tactic": {
+              "terms": {
+                "field": "kibana.alert.rule.threat.tactic.id",
+                "size": 20
+              },
+              "aggs": {
+
+                "by_technique": {
+                  "terms": {
+                    "field": "kibana.alert.rule.threat.technique.id",
+                    "size": 50
+                  },
+                  "aggs": {
+
+                    "by_subtechnique": {
+                      "terms": {
+                        "field": "kibana.alert.rule.threat.technique.subtechnique.id",
+                        "size": 50
+                      }
+                    },
+
+                    "rules": {
+                      "terms": {
+                        "field": "kibana.alert.rule.name",
+                        "size": 10
+                      }
+                    },
+
+                    "severity": {
+                      "terms": {
+                        "field": "kibana.alert.severity",
+                        "size": 5
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET /.internal.alerts-security.alerts-default-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now/y",
+              "lte": "now"
+            }
+          }
+        },
+        {
+          "exists": {
+            "field": "kibana.alert.ancestors.id"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "total_unique_alerts": {
+      "cardinality": {
+        "field": "kibana.alert.uuid",
+        "precision_threshold": 40000
+      }
+    },
+    "by_ancestor_id": {
+      "terms": {
+        "field": "kibana.alert.ancestors.id",
+        "size": 1000,
+        "order": {
+          "unique_alerts_in_chain": "desc"
+        }
+      },
+      "aggs": {
+        "chain_start": {
+          "min": {
+            "field": "@timestamp"
+          }
+        },
+        "chain_end": {
+          "max": {
+            "field": "@timestamp"
+          }
+        },
+        "chain_duration_ms": {
+          "bucket_script": {
+            "buckets_path": {
+              "start": "chain_start",
+              "end": "chain_end"
+            },
+            "script": "params.end - params.start"
+          }
+        },
+        "unique_alerts_in_chain": {
+          "cardinality": {
+            "field": "kibana.alert.uuid",
+            "precision_threshold": 10000
+          }
+        },
+        "time_distribution": {
+          "date_histogram": {
+            "field": "@timestamp",
+            "calendar_interval": "1h",
+            "min_doc_count": 1
+          }
+        },
+        "by_depth": {
+          "terms": {
+            "field": "kibana.alert.ancestors.depth",
+            "size": 10,
+            "order": {
+              "_key": "asc"
+            }
+          },
+          "aggs": {
+            "first_occurrence": {
+              "min": {
+                "field": "@timestamp"
+              }
+            },
+            "last_occurrence": {
+              "max": {
+                "field": "@timestamp"
+              }
+            },
+            "alert_count": {
+              "value_count": {
+                "field": "kibana.alert.uuid"
+              }
+            },
+            "by_tactic": {
+              "terms": {
+                "field": "kibana.alert.rule.threat.tactic.id",
+                "size": 30,
+                "missing": "unknown"
+              },
+              "aggs": {
+                "by_technique": {
+                  "terms": {
+                    "field": "kibana.alert.rule.threat.technique.id",
+                    "size": 100,
+                    "missing": "unknown"
+                  },
+                  "aggs": {
+                    "by_subtechnique": {
+                      "terms": {
+                        "field": "kibana.alert.rule.threat.technique.subtechnique.id",
+                        "size": 100,
+                        "missing": "unknown"
+                      }
+                    },
+                    "rules": {
+                      "terms": {
+                        "field": "kibana.alert.rule.name",
+                        "size": 20
+                      }
+                    },
+                    "severity": {
+                      "terms": {
+                        "field": "kibana.alert.severity",
+                        "size": 5
+                      }
+                    },
+                    "unique_alerts_per_technique": {
+                      "cardinality": {
+                        "field": "kibana.alert.uuid",
+                        "precision_threshold": 1000
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+GET /.internal.alerts-security.alerts-default-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now/y",
+              "lte": "now"
+            }
+          }
+        },
+        {
+          "term": {
+            "host.name": "SCRANTON.devails.local"
+          }
+        },
+        {
+          "exists": {
+            "field": "process.entity_id"
+          }
+        },
+        {
+          "exists": {
+            "field": "kibana.alert.ancestors.id"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "by_host": {
+      "terms": {
+        "field": "host.name",
+        "size": 10
+      },
+      "aggs": {
+        "by_process": {
+          "terms": {
+            "field": "process.entity_id",
+            "size": 100
+          },
+          "aggs": {
+            "kill_chain": {
+              "terms": {
+                "field": "kibana.alert.ancestors.id",
+                "size": 100
+              },
+              "aggs": {
+                "chain_start": {
+                  "min": { "field": "@timestamp" }
+                },
+                "chain_end": {
+                  "max": { "field": "@timestamp" }
+                },
+                "ordered_steps": {
+                  "terms": {
+                    "field": "kibana.alert.rule.threat.tactic.id",
+                    "order": { "_key": "asc" },
+                    "size": 20
+                  },
+                  "aggs": {
+                    "techniques": {
+                      "terms": {
+                        "field": "kibana.alert.rule.threat.technique.id",
+                        "size": 50
+                      }
+                    }
+                  }
+                },
+                "alert_count": {
+                  "value_count": {
+                    "field": "kibana.alert.uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

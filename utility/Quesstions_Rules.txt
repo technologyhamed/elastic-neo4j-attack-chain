@@ -1,0 +1,81 @@
+Start the MCP server
+
+If you need to start, stop, or restart your MCP server, you can use the MCP commands in the Command Palette:
+
+Open the Command Palette (Ctrl+Shift+P)
+
+Select MCP: List Servers
+
+Select the Neo4j Cypher server
+
+Select Start Server
+
+
+-----------------------------
+
+Summary
+The Neo4j Cypher MCP Server provides three tools for natural language database interaction:
+
+get-neo4j-schema - Obtains the database schema to prevent AI hallucinations
+
+read-neo4j-cypher - Executes safe, read-only queries automatically
+
+write-neo4j-cypher - Modifies data with user approval for safety
+
+These tools let anyone interact with Neo4j databases using natural language while maintaining safety through read-only operations and approval workflows
+
+-------------------------
+Summary
+You used the get-neo4j-schema tool to identify the outgoing relationships for User nodes in the movies database.
+
+In the next challenge, you will invoke the read-neo4j-cypher tool to answer a question about the dataset.
+
+---------------quesion-------
+
+Create a new user named Sarah
+
+Add a 5-star rating from John to The Godfather
+
+--------------quesion-----------
+Which movie has the highest IMDB rating, and what is its rating?
+---------------------------------
+
+Create a simple command line application in python that:
+
+1. Connects to Neo4j using the Neo4j Python driver using environment variables: NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD.
+2. Accepts a Genre name as a text input
+2. Runs a Cypher statement that produces a list of the top five movies ordered by their imdbRating in descending order.
+
+Rules:
+
+* The query must filer on non-null values
+* You must use tools to understand the schema information
+* You must validate your Cypher statement on real data from the database before you write it to the application.
+
+---------------------------
+{
+  "query": "MATCH (m:Movie) WHERE m.revenue IS NOT NULL RETURN m.title AS title, m.revenue AS revenue ORDER BY m.revenue DESC LIMIT 10"
+}
+
+.env
+NEO4J_URI=bolt://100.27.16.193:7687
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=seas-cause-women
+
+
+#-----------------------
+
+You’ve experienced the power of using MCP tools to rapidly prototype and build applications. The agent was able to:
+
+Understand the database schema
+
+Write and validate Cypher queries
+
+Generate a complete Python application
+
+Test the solution end-to-end
+
+This demonstrates how MCP tools can accelerate development workflows, allowing you to focus on the "what" while the AI handles the "how".
+
+----------------promt
+provide context-aware answers.

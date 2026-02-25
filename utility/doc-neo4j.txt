@@ -1,0 +1,240 @@
+Integrating Neo4j with LangChain allows developers to build advanced AI applications that can reason over graph data, generate Cypher queries, and provide context-aware answers
+
+Capabilities
+LangChain & Neo4j integration supports:
+
+Contextual Retrieval - Retrieve relevant subgraphs or nodes from Neo4j to provide context for LLM-powered answers.
+
+Querying Graph Data with Natural Language - Use LLMs to translate user questions into Cypher queries, enabling natural language access to graph data.
+
+Automated Reasoning - Combine the reasoning abilities of LLMs with the structured relationships in Neo4j for more accurate and insightful responses.
+
+Conversational AI - Build chatbots and assistants that can answer questions about complex, connected data stored in Neo4j.
+
+Knowledge Graph Construction - Automatically construct knowledge graphs from unstructured data using LLMs, and store them in Neo4j for further analysis.
+
+During this course you will explore how to get started with Neo4j and LangChain, including setting up your environment, building agents, and using graph data to enhance LLM capabilities.
+
+Review the code and try to answer the following questions:
+
+What is the agents purpose?
+
+What context is added to the agents prompt?
+
+What do you think the final answer will be?
+
+Run the agent to see what it does.
+
+
+The variables context and question are used to provide the information to the LLM.
+
+
+Schema
+You are going to modify the agent to retrieve the database schema and add it to the context.
+
+You can view the database schema using the Cypher query:
+
+
+CALL db.schema.visualization()
+
+
+To perform a similarity search, you need to:
+
+Connect to a Neo4j database
+
+Create an embedding model to convert a query into a vector
+
+Create a Neo4jVector instance and connect to the database
+
+Use the similarity_search method to find similar nodes based on the query
+
+Embedding model
+The movie plot embeddings were created using the OpenAI text-embedding-ada-002 model. You need to use the same model to convert the query into vectors.
+
+
+Filtering results
+
+You can filter the results of the similarity_search method by using the filter parameter.
+
+The filter parameter allows you to specify a condition to filter the results, for example, only return movies with a revenue gretaer than 200 million:
+
+
+result = plot_vector.similarity_search(
+    plot,
+    k=3,
+    filter={"revenue": {"$gte": 200000000}}
+)
+
+
+Run the application, review the results, and experiment with different questions:
+
+What is the movie with the pig who wants to be a sheep dog?
+
+What are some movies about fast cars?
+
+What are 3 movies about aliens coming to earth?
+
+What is a typical budget for a romance movie?
+
+Context
+The context is a list of Document objects returned by the similarity_search method. The Document content contains the movie plot and the node’s properties are returned as metadata.
+
+
+Text to Cypher
+Module Overview
+Vector retrievers are great for finding relevant data based on semantic similarity.
+
+To answer more specific questions, you may need to perform more complex queries to find data relating to specific nodes, relationships, or properties.
+
+Text to Cypher allows you to convert natural language queries into Cypher queries that can be executed against the graph.
+
+In this module, you will:
+
+Use the Cypher QA (question-answering) chain to query the graph using natural language queries.
+
+Create a custom Cypher generation prompt include specific instructions and examples queries.
+
+Explore how restricting the schema can support more focused queries.
+
+Add a text to Cypher retriever to a LangChain agent.
+
+
+Cypher QA Chain
+In this lesson, you will use the Cypher QA (question-answering) chain to query the graph using natural language queries.
+
+
+Cypher Generation
+
+Question: Get user ratings?
+Cypher: MATCH (u:User)-[r:RATED]->(m:Movie)
+        WHERE u.name = "User name"
+        RETURN r.rating AS userRating
+		
+		
+Challenge
+Retriever
+
+------------------
+Benefits and challenges
+Knowledge graphs have become invaluable tools, particularly in Generative AI, due to their ability to represent complex relationships and interconnections between data points. They organize information, allowing humans and machines to derive insights more efficiently and effectively.
+
+Benefits of knowledge graphs:
+Enhanced Data Integration and Interoperability
+Knowledge graphs facilitate data integration from disparate sources, creating a unified view.
+
+Improved Search and Discovery
+Knowledge graphs enhance search capabilities by structuring data into entities and relationships. Instead of simple keyword-based searches, users can perform more nuanced queries that reflect real-world contexts and relationships.
+
+Contextual Understanding
+Knowledge graphs help understand the context of information by capturing the relationships between entities.
+
+Enhanced Decision Making
+Knowledge graphs enable better decision-making by providing a holistic view of interconnected data. Organizations can identify patterns and trends that might not be apparent from isolated data points.
+
+Challenges
+While the benefits of knowledge graphs are substantial, creating and maintaining them comes with challenges. These challenges span from data acquisition and integration, including:
+
+Data Collection and Integration
+Data is often spread across various sources with different formats, structures, and standards.
+
+Data Quality
+Ensuring data’s accuracy, consistency, and completeness is crucial.
+
+Data Modeling & Schema Design
+Developing a flexible and robust schema that can accommodate a wide range of entities and relationships is challenging. The schema must be adaptable to evolving data requirements and scalable to handle large datasets.
+
+Entity Resolution
+Identifying and merging duplicate entities from different sources (e.g., different representations of the same person or company).
+
+Entity Linking & Relationships
+Accurately identifying and correctly associating entities with their corresponding entries in the knowledge graph is crucial for accuracy and understanding relationships.
+
+Using an LLM to assist in creating your knowledge graph can allow you to realize many benefits while mitigating some challenges.
+
+LLM’s can analyze the data, extract the entities and relationships, and generate the knowledge graph schema, allowing you to concentrate on understanding the data and relationships.
+
+----------------------------------
+
+Knowledge Graph Use Cases
+In this lesson, you will explore the use cases of knowledge graphs.
+
+Knowledge graphs have a wide range of applications across various domains and industries due to their ability to represent complex, interconnected data in a structured and flexible manner.
+
+Some common use cases of knowledge graphs include:
+
+Enhanced Data Integration and Interoperability: Knowledge graphs unify disparate data sources by creating a structured representation of entities and their relationships, which facilitates seamless data integration and interoperability across various systems and domains.
+
+Improved Search and Information Retrieval: By leveraging the semantic relationships between data points, knowledge graphs enhance search capabilities, enabling more precise and context-aware information retrieval, thus improving the relevance and accuracy of search results.
+
+Advanced Analytics and Insights Generation: Knowledge graphs enable advanced analytics through complex querying and reasoning over interconnected data, allowing for the discovery of hidden patterns, insights, and trends that support informed decision-making and predictive analytics.
+
+Personalized Recommendations and Content Discovery: By capturing user preferences, behavior, and context in a knowledge graph, personalized recommendation systems can deliver tailored content, products, and services to users, enhancing user experience and engagement.
+
+These are just a few examples of how knowledge graphs can be leveraged to address various challenges and opportunities in different domains, including healthcare, finance, e-commerce, and more. The flexibility and scalability of knowledge graphs make them a powerful tool for representing and analyzing complex data structures in a wide range of applications.
+
+--------------------------------------
+Extract nodes and relationships
+The next step is to pass the unstructured text data to the LLM to extract the nodes and relationships.
+
+You should provide a suitable prompt that will instruct the LLM to:
+
+Identify the entities in the text.
+
+Extract the relationships between the entities.
+
+Format the output so you can use it to generate the graph, for example, as JSON or another structured format.
+
+Optionally, you may also provide additional context or constraints for the extraction, such as the type of entities or relationships you are interested in extracting.
+
+------------------
+https://graphacademy.neo4j.com/courses/llm-knowledge-graph-construction/2-llm-graph-builder/2-LLM-graph-builder/kgbuilder/
+
+Protocol
+bolt
+
+URI
+3.233.222.36:7687
+
+Database
+neo4j
+
+Username
+neo4j
+
+Password
+debts-pedal-settlement
+
+------------------------------
+
+(Technology)-[:RELATED_TO]→(Technology)
+
+(Technology)-[:HAS]→(Capability)
+
+(Technology)-[:ENABLES]→(Benefit)
+
+(Technology)-[:HAS_POTENTIAL]→(Risk)
+
+(Concept)-[:RELATED_TO]→(Concept)
+
+(Concept)-[:EXPLAINED_IN]→(Resource)
+
+(Application)-[:USES]→(Technology)
+----------------------
+Customization
+Through the Graph Enhancement feature, you can also customize:
+
+The prompt used to extract entities and relationships.
+
+The chunking strategy used to split the document into smaller pieces.
+
+Deleting disconnected nodes from the graph.
+
+De-duplicating nodes.
+
+Fine tuning any post processing of the grap
+------------------------
+MATCH (d:Document)
+RETURN d.fileName AS Document, d.createdAt
+ORDER BY d.createdAt
+------------------------
+LLM Graph Builder 
