@@ -1,7 +1,7 @@
 {
   "servers": {
     "neo4j-cypher": {
-      "command": "uvx",
+      "command": "uv",
       "args": [
         "mcp-neo4j-cypher@0.2.3",
         "--transport",
